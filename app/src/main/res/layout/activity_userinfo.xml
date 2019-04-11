@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:id="@+id/activity_userinfo"
+    android:clickable="true">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/user_pic"
+        android:src="@drawable/bp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_centerVertical="true"
+            android:text="닉네임"
+            android:textSize="14dp"
+            android:id="@+id/nick_text"
+            />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:hint="닉네임은 2글자 이상"
+            android:id="@+id/id_edit"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/nick_text"
+            />
+    <!--
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:layout_marginRight="15dp"
+            android:id="@+id/password_text"
+            android:layout_below="@+id/id_edit"/>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:hint="비밀번호 입력"
+            android:id="@+id/password_edit"
+            android:layout_below="@+id/id_edit"
+            android:layout_toRightOf="@+id/password_text"
+            />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:hint="비밀번호 확인"
+        android:layout_marginLeft="75dp"
+        android:id="@+id/password_check_edit"
+        android:layout_below="@+id/password_edit"/>
+        -->
+        <Button
+            android:id="@+id/complete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="#FFB300"
+            android:text="수정 완료"
+            android:textColor="#FFFFFF"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="100dp"
+            android:layout_below="@+id/nick_text"/>
+    <ProgressBar
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="110dp"
+        android:id="@+id/pbpic"
+        android:visibility="gone"/>
+</RelativeLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ffffff"
+    android:clickable="true">
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:id="@+id/chat_recycler_view"
+        android:layout_marginTop="20dp"
+        android:layout_above="@+id/chatedit"
+        >
+    </android.support.v7.widget.RecyclerView>
+
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:hint="채팅"
+            android:id="@+id/chatedit"
+            android:layout_alignParentBottom="true"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="send"
+            android:id="@+id/chatsendbtn"
+            android:layout_toRightOf="@+id/chatedit"
+            android:layout_alignParentBottom="true"/>
+</RelativeLayout>

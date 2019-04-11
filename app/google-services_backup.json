@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1030767051701",
+    "project_id": "firebase-postnote"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1030767051701:android:31741b4e6e8bd0ea",
+        "android_client_info": {
+          "package_name": "com.flcat.postnote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1030767051701-3h19t56cuk1eqkbsolrqiirc8jbo01di.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flcat.postnote",
+            "certificate_hash": "5078749ee237b640b6dd5be87de14d4af47c02a4"
+          }
+        },
+        {
+          "client_id": "1030767051701-vgp007hsc8tgaqvp9peoes667m3gq8rn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPJyGcOxz4Te5Y-fDUpkF-w8INcOysoO0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,60 @@
+{
+  "project_info": {
+    "project_number": "1030767051701",
+    "firebase_url": "https://fir-postnote.firebaseio.com",
+    "project_id": "firebase-postnote",
+    "storage_bucket": "firebase-postnote.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1030767051701:android:31741b4e6e8bd0ea",
+        "android_client_info": {
+          "package_name": "com.flcat.postnote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1030767051701-1h91pk00cf63igg5gjll70ug5ljefl91.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flcat.postnote",
+            "certificate_hash": "5078749ee237b640b6dd5be87de14d4af47c02a4"
+          }
+        },
+        {
+          "client_id": "1030767051701-cro3eqad1sng77stmpi471hf6lcfoi14.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flcat.postnote",
+            "certificate_hash": "a9eb339460c3369c88e7fb70c0b3f7f5e971ed1c"
+          }
+        },
+        {
+          "client_id": "1030767051701-no7g4id88de8257011aav4edt3k6r891.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flcat.postnote",
+            "certificate_hash": "cdf8d0ae94f3e3b853089658ed2fc3baa2740db5"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPJyGcOxz4Te5Y-fDUpkF-w8INcOysoO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1030767051701-r1sns3vgjoljn6ltc2e7fn6ojtgmb58r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

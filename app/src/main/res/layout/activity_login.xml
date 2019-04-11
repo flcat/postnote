@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    >
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:textSize="20dp"
+            android:id="@+id/EmailTextView"
+            android:layout_marginRight="20dp"
+           />
+        <EditText
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:hint="이메일 입력"
+            android:id="@+id/login_email_edit"
+            android:layout_toRightOf="@+id/EmailTextView"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="8dp"
+            android:id="@+id/passwordTextView"
+            android:layout_below="@+id/EmailTextView"
+            />
+        <EditText
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:hint="비밀번호 입력"
+            android:id="@+id/login_password_edit"
+            android:layout_below="@+id/EmailTextView"
+            android:layout_toRightOf="@+id/passwordTextView" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="로그인"
+            android:textColor="#FFFFFF"
+            android:id="@+id/login_btn"
+            android:background="#FFB300"
+            android:layout_marginLeft="30dp"
+            android:layout_below="@+id/login_password_edit"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="회원가입"
+            android:textColor="#FFFFFF"
+            android:id="@+id/signup_btn"
+            android:background="#FFB300"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/login_btn"
+            android:layout_below="@id/login_password_edit"/>
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/google_login_btn"
+        android:layout_width="190dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:visibility="visible"
+        android:paddingTop="10dp"
+        android:layout_below="@+id/login_btn"
+        android:layout_marginLeft="30dp"/>
+    </RelativeLayout>
+    <ProgressBar
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/progress"
+        android:visibility="gone"
+        />
+</RelativeLayout>
