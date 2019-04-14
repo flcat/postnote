@@ -19,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -66,7 +67,7 @@ import java.util.List;
 
 import static com.flcat.postnote.R.layout.activity_main;
 
-public class TodoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,AbsListView.OnScrollListener {
+public class TodoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,AbsListView.OnScrollListener, SwipeRefreshLayout.OnRefreshListener {
     FirebaseAuth mFirebaseAuth;
     public static FirebaseUser mFirebaseUser;
     DrawerLayout drawer = null;
@@ -171,8 +172,6 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
                 //progressBar.setVisibility(View.GONE);
             //}
         //});
-
-        //listview.setOnScrollListener(this);
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -531,7 +530,7 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
             //progressBar.setVisibility(View.VISIBLE);
             Log.e("스크롤되고있다","스크롤");
             // 다음 데이터를 불러온다.
-            //getitem();
+            getitem();
         }
     }
 
@@ -542,6 +541,7 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
         // totalItemCount : 리스트 전체의 총 갯수
         // 리스트의 갯수가 0개 이상이고, 화면에 보이는 맨 하단까지의 아이템 갯수가 총 갯수보다 크거나 같을때.. 즉 리스트의 끝일때. true
         lastItemVisibleFlag = (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount);
+        int lastItemVisiblePosition = view.getLastVisiblePosition();
         Log.e("position", "--firstItem:" + firstVisibleItem + "  visibleItemCount:" + visibleItemCount + "  totalItemCount:" + totalItemCount + "  pageCount:" + totPageCount);
         int total = firstVisibleItem + visibleItemCount;
 
@@ -554,10 +554,9 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
             if (totalItemCount > previousTotal) {  // 20 , 40 >
                 loading = false;
                 previousTotal = totalItemCount;
-                //currentPage++;
+                currentPage++;
             }
         }
-
         if (totPageCount > 0) {
             Log.e("position", "total%20 :" + total % 20 + "        loading=" + loading);
             if (totPageCount == currentPage) {
@@ -614,6 +613,11 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void onRefresh() {
+        getitem();
     }
 
     class BackgroundTask extends AsyncTask<Void, Void, String>
