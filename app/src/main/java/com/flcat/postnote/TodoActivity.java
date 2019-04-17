@@ -237,7 +237,6 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
 
         //유저 사진
         final ImageView navi_header_userPhoto = (ImageView)navi_header_view.findViewById(R.id.nav_header_userphoto);
-        //
         // Write a message to the database
         // Read from the database
 

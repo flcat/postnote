@@ -51,17 +51,15 @@ import java.util.Locale;
 public class WriteActivity extends Activity {
     private int TAKE_CAMERA = 1; //앱에서 카메라 호출시 반환해주는 값
     private int TAKE_GALLERY = 2; //앱에서 갤러리 호출시 반환해주는 값
-    private Uri mImageCaptureUri; //로컬 이미지 Uri 주소 오프라인에서만 유효하다.
+    private Uri mImageCaptureUri; //로컬 이미지 Uri 주소
     private String selectedPath;
     private String selectedThumbnailPath;
     private Uri returnImg;
-    private Bitmap bm;
     private EditText et1; // 제목 에딧
     private EditText et2; // 본문 에딧
     private ImageView iv; //글쓰기 액티비티에서 이미지 출력
     private String imagePath;
     private TextView addressTextview; //위도 경도를 지오코드로 변환한 주소 표시
-    String spTmp;
     String mUri;
     String mThumbUri;
     private static final int MY_PERMISSION_REQUEST_STORAGE = 3;
