@@ -54,6 +54,7 @@ public class WriteActivity extends Activity {
     private Uri mImageCaptureUri; //로컬 이미지 Uri 주소
     private String selectedPath;
     private String selectedThumbnailPath;
+    private String spTmp;
     private Uri returnImg;
     private EditText et1; // 제목 에딧
     private EditText et2; // 본문 에딧
@@ -93,7 +94,7 @@ public class WriteActivity extends Activity {
 
         //각 계정별로 DB를 관리하기위해 email을 유일한 키값으로 씀
         //로그인 한 이메일 값을 얻어옴
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         final String email = intent.getStringExtra("email");
 
         locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
@@ -127,7 +128,12 @@ public class WriteActivity extends Activity {
 
         findViewById(R.id.write_pic_btn).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                //수정전 카메라 호출
                 camera();
+                //수정후 카메라 호출
+                //Intent cameraintent = new Intent(getApplicationContext(), CameraActivity.class);
+                //mImageCaptureUri = cameraintent.getData();
+                //startActivityForResult(cameraintent,TAKE_CAMERA);
             }
         });
 
@@ -268,22 +274,17 @@ public class WriteActivity extends Activity {
         if (requestCode == TAKE_CAMERA) {
             if(resultCode == Activity.RESULT_OK) { //backpress button
                 iv.setImageURI(mImageCaptureUri);
-                //Log.e("mImageCaptureUri",mImageCaptureUri.getPath().toString());
-                //String spResult = spTmp.substring(7, spTmp.length());
-                //String tmp = getRealPathFromURI(mImageCaptureUri);
-                //Log.e("spTmp", spResult);
-                //data.putExtra("uri", spResult);
+                Log.e("camera_mImageCaptureUri",mImageCaptureUri.getPath().toString());
+                String spResult = spTmp.substring(7, spTmp.length());
+                String tmp = getRealPathFromURI(mImageCaptureUri);
+                Log.e("spTmp", spResult);
+                data.putExtra("uri", spResult);
                 mImageCaptureUri = data.getData();
                 Log.d("사진 실제 주소", mImageCaptureUri.getPath().toString());
                 //썸네일
-                //iv.setImageURI(mImageCaptureUri);
                 iv.setImageBitmap(resize(getApplicationContext(),mImageCaptureUri,360));
                 mThumbUri = getImageUri(getApplicationContext(),resize(getApplicationContext(),mImageCaptureUri,60)).toString();
                 selectedThumbnailPath =  getRealPathFromURI(Uri.parse(mThumbUri));
-                //iv.setImageBitmap(getThumbNail(mImageCaptureUri));
-                //Log.e("getThumbNail address",getThumbNail(mImageCaptureUri).toString());
-
-                String tmp = getRealPathFromURI(mImageCaptureUri);
                 Log.e("mImageCaptureUri", tmp);
                 Log.e("selectedThumbnailPath",selectedThumbnailPath);
                 data.putExtra("mUri", tmp);
@@ -309,11 +310,9 @@ public class WriteActivity extends Activity {
                     mImageCaptureUri = data.getData();
                     Log.d("사진 실제 주소", mImageCaptureUri.getPath().toString());
                     //썸네일
-                    //iv.setImageURI(mImageCaptureUri);
                     iv.setImageBitmap(resize(getApplicationContext(),mImageCaptureUri,360));
                     mThumbUri = getImageUri(getApplicationContext(),resize(getApplicationContext(),mImageCaptureUri,60)).toString();
                     selectedThumbnailPath =  getRealPathFromURI(Uri.parse(mThumbUri));
-                    //iv.setImageBitmap(getThumbNail(mImageCaptureUri));
                     //Log.e("getThumbNail address",getThumbNail(mImageCaptureUri).toString());
                     String tmp = getRealPathFromURI(mImageCaptureUri);
                     Log.e("mImageCaptureUri", tmp);
@@ -371,8 +370,8 @@ public class WriteActivity extends Activity {
 
         File file = new File(imageStorageDir + File.separator + "IMG_" + String.valueOf(System.currentTimeMillis()) + ".jpg");
 
-        mImageCaptureUri = Uri.fromFile(file);
-        galleryAddPic();
+        //mImageCaptureUri = Uri.fromFile(file);
+        //galleryAddPic();
         // ImageView에 보여주기위해 사진파일의 절대 경로를 얻어온다.
         imagePath = file.getAbsolutePath();
 
@@ -388,13 +387,17 @@ public class WriteActivity extends Activity {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
                 mImageCaptureUri = intent.getData();
                 startActivityForResult(intent, TAKE_CAMERA);
+                //finish();
             }
         } else {
+            /*
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
             mImageCaptureUri = intent.getData();
             startActivityForResult(intent, TAKE_CAMERA);
+            */
         }
+
     }
 
     private void checkGalleryPermission() {
@@ -474,7 +477,6 @@ public class WriteActivity extends Activity {
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
     }
-
 
     private Bitmap resize(Context context,Uri uri,int resize){
         Bitmap resizeBitmap=null;
@@ -670,6 +672,4 @@ public class WriteActivity extends Activity {
     public void onStop() {
         super.onStop();
     }
-
-
 }
