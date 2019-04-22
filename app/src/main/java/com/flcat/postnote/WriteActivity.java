@@ -375,6 +375,7 @@ public class WriteActivity extends Activity {
         // ImageView에 보여주기위해 사진파일의 절대 경로를 얻어온다.
         imagePath = file.getAbsolutePath();
 
+        //사용자의 os가 마시멜로우 이상인지 체크.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) { //camera permission 불가면 실행
                 if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
@@ -387,17 +388,11 @@ public class WriteActivity extends Activity {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
                 mImageCaptureUri = intent.getData();
                 startActivityForResult(intent, TAKE_CAMERA);
-                //finish();
             }
         } else {
-            /*
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-            mImageCaptureUri = intent.getData();
-            startActivityForResult(intent, TAKE_CAMERA);
-            */
+            //사용자 os가 마시멜로우 이하일 경우
+            Toast.makeText(this, "마시멜로우 os 이하에서는 카메라를 이용할 수 없습니다.", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     private void checkGalleryPermission() {
