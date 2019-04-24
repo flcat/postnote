@@ -181,7 +181,7 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
 
                 //select position 확인
                 //Toast.makeText(getApplicationContext(), "Item #" + item + " 클릭됨.", Toast.LENGTH_SHORT).show();
-
+                num = item.getNum();
                 String title = item.getTitle();
                 String content = item.getContent();
                 String mUri = item.getmUri();
@@ -194,6 +194,7 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
 
                 intent.putExtra("mode", "modify");
+                intent.putExtra("num",num);
                 intent.putExtra("title", title);
                 intent.putExtra("content", content);
                 intent.putExtra("mUri",mUri);

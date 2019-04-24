@@ -391,20 +391,28 @@ public class WriteActivity extends Activity {
             }
         } else {
             //사용자 os가 마시멜로우 이하일 경우
+            //임시
             Toast.makeText(this, "마시멜로우 os 이하에서는 카메라를 이용할 수 없습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void checkGalleryPermission() {
-        //갤러리 데이터 열 퍼미션 체크
-        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED||
-                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},1052);
+        //사용자의 os가 마시멜로우 이상인지 체크.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //갤러리 데이터 열 퍼미션 체크
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1052);
+            } else {
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+                mImageCaptureUri = intent.getData();
+                startActivityForResult(intent, TAKE_GALLERY);
+            }
         } else {
-            Intent intent = new Intent(Intent.ACTION_PICK,  android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-            mImageCaptureUri = intent.getData();
-            startActivityForResult(intent, TAKE_GALLERY);
+            //사용자 os가 마시멜로우 이하일 경우
+            //임시
+            Toast.makeText(this, "마시멜로우 os 이하에서는 갤러리를 이용할 수 없습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 

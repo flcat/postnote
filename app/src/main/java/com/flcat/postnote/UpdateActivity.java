@@ -475,9 +475,7 @@ public class UpdateActivity extends Activity {
                 startActivityForResult(intent, TAKE_CAMERA);
             }
         } else {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-            startActivityForResult(intent, TAKE_CAMERA);
+
         }
     }
 
@@ -514,10 +512,6 @@ public class UpdateActivity extends Activity {
         ui.execute();
     }
 
-    /*
-     *
-     * 사용자의 위치를 수신
-     */
     /**
      * 사용자의 위치를 수신
      */
@@ -601,6 +595,7 @@ public class UpdateActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        /*
         SharedPreferences sp = getSharedPreferences("pref",MODE_PRIVATE);
         SharedPreferences.Editor editor=sp.edit();
         String title = et1.getText().toString();
@@ -609,6 +604,7 @@ public class UpdateActivity extends Activity {
         editor.putString("title",title);
         editor.putString("content",content);
         editor.commit();
+        */
     }
     @Override
     public void onBackPressed() {
