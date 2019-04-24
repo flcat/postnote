@@ -91,6 +91,8 @@ public class UpdateActivity extends Activity {
         final Intent intent = getIntent();
         final String email = intent.getStringExtra("email");
 
+
+
         locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
 
         // GPS 프로바이더 사용가능여부
