@@ -9,7 +9,7 @@
         <ImageView
             android:layout_width="360dp"
             android:layout_height="240dp"
-            android:id="@+id/imageView1"
+            android:id="@+id/imageView_update"
             android:background="@drawable/bp"/>
     </LinearLayout>
     <LinearLayout
@@ -53,7 +53,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/save_btn"
+                android:id="@+id/save_btn_up"
                 android:src="@drawable/save_ic"
                 />
         </LinearLayout>
@@ -65,7 +65,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/gallery_btn"
+                android:id="@+id/gallery_btn_up"
                 android:src="@drawable/new_gallery"
                 />
         </LinearLayout>
@@ -77,7 +77,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/pic_btn"
+                android:id="@+id/pic_btn_up"
                 android:src="@drawable/camera"
                 />
         </LinearLayout>
@@ -89,7 +89,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/map_btn"
+                android:id="@+id/map_btn_up"
                 android:src="@drawable/map"
                 />
         </LinearLayout>
@@ -101,7 +101,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/brush_btn"
+                android:id="@+id/brush_btn_up"
                 android:src="@drawable/brush"
                 />
         </LinearLayout>

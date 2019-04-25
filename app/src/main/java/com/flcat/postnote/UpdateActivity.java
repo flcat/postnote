@@ -42,6 +42,10 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -64,7 +68,9 @@ public class UpdateActivity extends Activity {
     private double dlat,dlng; //MapsActivity에서 받아온 위도 lat 경도 lng 를 담을 변수
     private String slat,slng; //위도 경도 값을 WriteRequest로 보내기위해 형변환한 값을 담는 변수.
     public static int map_flag = 0;
+    private String title,content,mUri,mThumbUri,lat,lng;
     private int num; // DB상에서 글 번호를 매기기 위한 변수.
+    private Bitmap bitmap;
     // 사용자 위치 수신기
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -80,18 +86,63 @@ public class UpdateActivity extends Activity {
         super.onCreate(savedInstanceState);
         Log.e("UpdateActivity", "onCreate");
         setContentView(R.layout.activity_update);
-        iv = (ImageView) findViewById(R.id.imageView1);
+        iv = (ImageView) findViewById(R.id.imageView_update);
         iv.setScaleType(ImageView.ScaleType.FIT_XY);
-        et1 = (EditText) findViewById(R.id.title_edit);
-        et2 = (EditText) findViewById(R.id.content_edit);
-        addressTextview = (TextView)findViewById(R.id.adress_textview);
+        et1 = (EditText) findViewById(R.id.title_update);
+        et2 = (EditText) findViewById(R.id.content_update);
+        //addressTextview = (TextView)findViewById(R.id.adress_textview);
 
         //각 계정별로 DB를 관리하기위해 email을 유일한 키값으로 씀
         //로그인 한 이메일 값을 얻어옴
         final Intent intent = getIntent();
         final String email = intent.getStringExtra("email");
+        Intent intent2 = getIntent();
+                num = new Integer(intent2.getStringExtra("num"));
+                title = intent2.getStringExtra("title");
+                content = intent2.getStringExtra("content");
+                mUri = intent2.getStringExtra("mUri");
+                mThumbUri = intent.getStringExtra("mThumbUri");
+                lat = intent2.getStringExtra("lat");
+                lng = intent2.getStringExtra("lng");
+                Log.e("UpdateActivity_좌표",title+"/"+content+"/"+mUri+"/"+mThumbUri+"/"+lat+"/"+lng);
+                //
 
+                if((lat != null && lng != null) || (lat != "" && lng != "")) {
+                    dlat = Double.parseDouble(lat);
+                    dlng = Double.parseDouble(lng);
+                }
+                //JSON data insert
+                et1.setText(title);
+                et2.setText(content);
+                if(mUri != null && mUri != "" && mUri.length() > 5 ) {
+                    Thread mThread = new Thread(){
+                        @Override
+                        public void run() {
+                            try {
+                                URL url = new URL(mUri);
+                                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                                conn.setDoInput(true);
+                                conn.connect();
 
+                                InputStream is = conn.getInputStream();
+                                bitmap = BitmapFactory.decodeStream(is);
+                            } catch (MalformedURLException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+
+                    mThread.start();
+
+                    try{
+                        mThread.join();
+                        iv.setImageBitmap(bitmap);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
 
         locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
 
@@ -129,20 +180,20 @@ public class UpdateActivity extends Activity {
             }
         });
 
-        findViewById(R.id.write_pic_btn).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.pic_btn_up).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 camera();
             }
         });
 
-        findViewById(R.id.write_gallery_btn).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.gallery_btn_up).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 checkGalleryPermission();
 
             }
         });
 
-        findViewById(R.id.map_btn).setOnClickListener(new View.OnClickListener(){
+        findViewById(R.id.map_btn_up).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(UpdateActivity.this,MapsActivity.class);
@@ -151,7 +202,7 @@ public class UpdateActivity extends Activity {
             }
         });
 
-        findViewById(R.id.write_save_btn).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.save_btn_up).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
