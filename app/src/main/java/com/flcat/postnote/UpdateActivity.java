@@ -40,7 +40,9 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -56,6 +58,7 @@ public class UpdateActivity extends Activity {
     private int TAKE_GALLERY = 2; //앱에서 갤러리 호출시 반환해주는 값
     private Uri mImageCaptureUri; //로컬 이미지 Uri 주소 오프라인에서만 유효하다.
     private String selectedPath;
+    private String selectedThumbnailPath;
     private Uri returnImg;
     private Bitmap bm;
     private EditText et1; // 제목 에딧
@@ -80,6 +83,9 @@ public class UpdateActivity extends Activity {
     //최소 gps 정보 업데이트 거리 10미터
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
     int REQUEST_CODE_LOCATION=0;
+    //임시저장선언
+    SharedPreferences sp;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,14 +100,13 @@ public class UpdateActivity extends Activity {
 
         //각 계정별로 DB를 관리하기위해 email을 유일한 키값으로 씀
         //로그인 한 이메일 값을 얻어옴
-        final Intent intent = getIntent();
-        final String email = intent.getStringExtra("email");
-        Intent intent2 = getIntent();
+        final Intent intent2 = getIntent();
+        final String email = intent2.getStringExtra("email");
                 num = new Integer(intent2.getStringExtra("num"));
                 title = intent2.getStringExtra("title");
                 content = intent2.getStringExtra("content");
                 mUri = intent2.getStringExtra("mUri");
-                mThumbUri = intent.getStringExtra("mThumbUri");
+                mThumbUri = intent2.getStringExtra("mThumbUri");
                 lat = intent2.getStringExtra("lat");
                 lng = intent2.getStringExtra("lng");
                 Log.e("UpdateActivity_좌표",title+"/"+content+"/"+mUri+"/"+mThumbUri+"/"+lat+"/"+lng);
@@ -165,8 +170,8 @@ public class UpdateActivity extends Activity {
                 dlng = userLocation.getLongitude();
                 slat = dlat+"";
                 slng = dlng+"";
-                intent.putExtra("slat", slat);
-                intent.putExtra("slng", slng);
+                intent2.putExtra("slat", slat);
+                intent2.putExtra("slng", slng);
                 //MapsActivity 에서 값 제대로 넘겨받았는지 확인
             }
             Log.e("위도경도 잘됨?",slat+"/"+slng);
@@ -207,7 +212,7 @@ public class UpdateActivity extends Activity {
             public void onClick(View v) {
 
                 //최대값 구해와야함
-                num = Integer.parseInt(intent.getStringExtra("num"));
+                num = Integer.parseInt(intent2.getStringExtra("num"));
                 String title = et1.getText().toString(); //WriteRequest에 값을 보내기 위해 edittext에 입력된값을 변수에 저장
                 String content = et2.getText().toString();
                 String mUri = "";
@@ -241,7 +246,7 @@ public class UpdateActivity extends Activity {
                                 boolean success = jsonResponse.getBoolean("success");
                                 if (success) {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(UpdateActivity.this);
-                                    builder.setMessage("메모 등록에 성공했습니다.")
+                                    builder.setMessage("메모 수정에 성공했습니다.")
                                             .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
@@ -251,7 +256,7 @@ public class UpdateActivity extends Activity {
                                             }).create().show();
                                 } else {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(UpdateActivity.this);
-                                    builder.setMessage("메모 등록에 실패했습니다.")
+                                    builder.setMessage("메모 수정에 실패했습니다.")
                                             .setNegativeButton("확인", null).create().show();
                                 }
                             } catch (JSONException e) {
@@ -321,16 +326,27 @@ public class UpdateActivity extends Activity {
     //받을 때 호출되는 콜백(실행한적 없는데 실행되는) 메소드
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if(resultCode == Activity.RESULT_OK) { //backpress button
-            if (requestCode == TAKE_CAMERA) {
+        if (requestCode == TAKE_CAMERA) {
+            if(resultCode == Activity.RESULT_OK) { //backpress button
                 iv.setImageURI(mImageCaptureUri);
-                // Log.e("mImageCaptureUri",mImageCaptureUri.getPath().toString());
+                Log.e("camera_mImageCaptureUri",mImageCaptureUri.getPath().toString());
                 String spResult = spTmp.substring(7, spTmp.length());
-                //String tmp = getRealPathFromURI(mImageCaptureUri);
+                String tmp = getRealPathFromURI(mImageCaptureUri);
                 Log.e("spTmp", spResult);
                 data.putExtra("uri", spResult);
-            } else if (requestCode == TAKE_GALLERY) {
+                mImageCaptureUri = data.getData();
+                Log.d("사진 실제 주소", mImageCaptureUri.getPath().toString());
+                //썸네일
+                iv.setImageBitmap(resize(getApplicationContext(),mImageCaptureUri,360));
+                mThumbUri = getImageUri(getApplicationContext(),resize(getApplicationContext(),mImageCaptureUri,60)).toString();
+                selectedThumbnailPath =  getRealPathFromURI(Uri.parse(mThumbUri));
+                Log.e("mImageCaptureUri", tmp);
+                Log.e("selectedThumbnailPath",selectedThumbnailPath);
+                data.putExtra("mUri", tmp);
+                data.putExtra("mThumbUri", selectedThumbnailPath);
+            }
+        } else if (requestCode == TAKE_GALLERY) {
+            if(resultCode == Activity.RESULT_OK) { //backpress button
                 Log.d("test", "data : " + data);
                 if (data != null) {
                     System.out.println("SELECT_Images");
@@ -348,28 +364,30 @@ public class UpdateActivity extends Activity {
                     }
                     mImageCaptureUri = data.getData();
                     Log.d("사진 실제 주소", mImageCaptureUri.getPath().toString());
-
-                    //iv.setImageURI(mImageCaptureUri);
-                    iv.setImageBitmap(getThumbNail(mImageCaptureUri));
-                    Log.e("getThumbNail address",getThumbNail(mImageCaptureUri).toString());
-
+                    //썸네일
+                    iv.setImageBitmap(resize(getApplicationContext(),mImageCaptureUri,360));
+                    mThumbUri = getImageUri(getApplicationContext(),resize(getApplicationContext(),mImageCaptureUri,60)).toString();
+                    selectedThumbnailPath =  getRealPathFromURI(Uri.parse(mThumbUri));
+                    //Log.e("getThumbNail address",getThumbNail(mImageCaptureUri).toString());
                     String tmp = getRealPathFromURI(mImageCaptureUri);
-                    //thumbnailTmp = getThumbnailPath(mImageCaptureUri+"");
-                    //iv.setImageURI(Uri.parse(thumbnailTmp));
                     Log.e("mImageCaptureUri", tmp);
-                    data.putExtra("uri", tmp);
-                    //data.putExtra("mThumbUri", thumbnailTmp);
+                    Log.e("selectedThumbnailPath",selectedThumbnailPath);
+                    data.putExtra("mUri", tmp);
+                    data.putExtra("mThumbUri", selectedThumbnailPath);
                 }
             }
-            if (slat != null && slng != null ) {
-                dlat = Double.parseDouble(slat);
-                dlng = Double.parseDouble(slng);
-                addressTextview.setText(getAddress(getApplicationContext(), dlat, dlng));
-                Toast.makeText(getApplicationContext(), "lat : " + slat + "\n lng :" + slng, Toast.LENGTH_SHORT).show();
-            }
-        } //back button
-
-
+        }
+        else if (requestCode == 5001 || resultCode == Activity.RESULT_OK ) {
+            dlat = Double.parseDouble(data.getStringExtra("slat"));
+            dlng = Double.parseDouble(data.getStringExtra("slng"));
+            editor.putString("slat",dlat+"");
+            editor.putString("slng",dlng+"");
+            editor.commit();
+            addressTextview.setText(getAddress(getApplicationContext(), dlat, dlng));
+            Toast.makeText(getApplicationContext(), "lat : " + dlat + "\n lng :" + dlng, Toast.LENGTH_SHORT).show();
+        } else if (resultCode == Activity.RESULT_CANCELED){
+            //반환값 없을 경우
+        }
     }
 
     //위도경도 > 주소 지오코드
@@ -500,6 +518,40 @@ public class UpdateActivity extends Activity {
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
+    }
+    private Bitmap resize(Context context,Uri uri,int resize){
+        Bitmap resizeBitmap=null;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        try {
+            BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, options); // 1번
+
+            int width = options.outWidth;
+            int height = options.outHeight;
+            int samplesize = 1;
+
+            while (true) {//2번
+                if (width / 2 < resize || height / 2 < resize)
+                    break;
+                width /= 2;
+                height /= 2;
+                samplesize *= 2;
+            }
+
+            options.inSampleSize = samplesize;
+            Bitmap bitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, options); //3번
+            resizeBitmap=bitmap;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return resizeBitmap;
+    }
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
     private void camera(){
         File imageStorageDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +"/DCIM/Camera/");
