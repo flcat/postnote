@@ -102,6 +102,7 @@ public class UpdateActivity extends Activity {
         //로그인 한 이메일 값을 얻어옴
         final Intent intent2 = getIntent();
         final String email = intent2.getStringExtra("email");
+
                 num = new Integer(intent2.getStringExtra("num"));
                 title = intent2.getStringExtra("title");
                 content = intent2.getStringExtra("content");
@@ -156,6 +157,9 @@ public class UpdateActivity extends Activity {
         // 네트워크 프로바이더 사용가능여부
         isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
+        //임시저장
+        sp = getSharedPreferences("pref", MODE_PRIVATE);
+        editor = sp.edit();
 
         if(map_flag == 0) {
             // 사용자의 위치 수신을 위한 세팅 //
@@ -215,8 +219,16 @@ public class UpdateActivity extends Activity {
                 num = Integer.parseInt(intent2.getStringExtra("num"));
                 String title = et1.getText().toString(); //WriteRequest에 값을 보내기 위해 edittext에 입력된값을 변수에 저장
                 String content = et2.getText().toString();
-                String mUri = "";
-                String mThumbUri = "";
+                //if (mImageCaptureUri != null) {
+                thumbnailUploadImage();
+                Log.e("writeActivity_thumbnail","ok"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
+                uploadImage();
+                Log.e("writeActivity_image","ok2"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
+                editor.putString("mUri","http://flcat.vps.phps.kr/uploads/images"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
+                editor.putString("mThumbUri","http://flcat.vps.phps.kr/uploads/thumbnails"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
+                editor.commit();
+                Log.e("파일명",FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
+
 
                 if (mImageCaptureUri != null) {
                     uploadImage();
@@ -383,7 +395,7 @@ public class UpdateActivity extends Activity {
             editor.putString("slat",dlat+"");
             editor.putString("slng",dlng+"");
             editor.commit();
-            addressTextview.setText(getAddress(getApplicationContext(), dlat, dlng));
+            //addressTextview.setText(getAddress(getApplicationContext(), dlat, dlng));
             Toast.makeText(getApplicationContext(), "lat : " + dlat + "\n lng :" + dlng, Toast.LENGTH_SHORT).show();
         } else if (resultCode == Activity.RESULT_CANCELED){
             //반환값 없을 경우
@@ -615,6 +627,39 @@ public class UpdateActivity extends Activity {
         }
         UploadImage ui = new UploadImage();
         ui.execute();
+    }
+
+    //Thumbnail 업로드 AsyncTask
+    private void thumbnailUploadImage() {
+        class ThumbnailUploadImage extends AsyncTask<Void, Void, String> {
+
+            ProgressDialog uploading;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                //uploading = ProgressDialog.show(WriteActivity.this, "Uploading File", "Please wait...", false, false);
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                //uploading.dismiss();
+                //textViewResponse.setText(Html.fromHtml("<b>Uploaded at <a href='" + s + "'>" + s + "</a></b>"));
+                //textViewResponse.setMovementMethod(LinkMovementMethod.getInstance());
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                ThumbnailFileUpload tu = new ThumbnailFileUpload();
+                String msg2 = tu.uploadImage(selectedThumbnailPath);
+
+
+                return msg2;
+            }
+        }
+        ThumbnailUploadImage tui = new ThumbnailUploadImage();
+        tui.execute();
     }
 
     /**

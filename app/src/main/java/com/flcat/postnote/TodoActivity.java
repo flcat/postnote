@@ -195,6 +195,7 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
 
                 intent.putExtra("mode", "modify");
                 intent.putExtra("num",num);
+                intent.putExtra("email",userEmail);
                 intent.putExtra("title", title);
                 intent.putExtra("content", content);
                 intent.putExtra("mUri",mUri);

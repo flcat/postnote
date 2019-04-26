@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class UpdateRequest extends StringRequest {
 
-        final static private String URL = "http://flcat.vps.phps.kr/update.php";
+        final static private String URL = "http://flcat.vps.phps.kr/Update.php";
         private Map<String, String> parameters;
 
 
