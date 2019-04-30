@@ -110,7 +110,7 @@ public class UpdateActivity extends Activity {
                 mThumbUri = intent2.getStringExtra("mThumbUri");
                 lat = intent2.getStringExtra("lat");
                 lng = intent2.getStringExtra("lng");
-                Log.e("UpdateActivity_좌표",title+"/"+content+"/"+mUri+"/"+mThumbUri+"/"+lat+"/"+lng);
+                Log.e("UpdateActivity_좌표",num+"/"+title+"/"+content+"/"+mUri+"/"+mThumbUri+"/"+lat+"/"+lng);
                 //
 
                 if((lat != null && lng != null) || (lat != "" && lng != "")) {
@@ -221,20 +221,13 @@ public class UpdateActivity extends Activity {
                 String content = et2.getText().toString();
                 //if (mImageCaptureUri != null) {
                 thumbnailUploadImage();
-                Log.e("writeActivity_thumbnail","ok"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
+                //Log.e("updateActivity_thumb","ok"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
                 uploadImage();
-                Log.e("writeActivity_image","ok2"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
+                //Log.e("updateActivity_image","ok2"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
                 editor.putString("mUri","http://flcat.vps.phps.kr/uploads/images"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
                 editor.putString("mThumbUri","http://flcat.vps.phps.kr/uploads/thumbnails"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
                 editor.commit();
-                Log.e("파일명",FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
-
-
-                if (mImageCaptureUri != null) {
-                    uploadImage();
-                    mUri = getRealPathFromURI(mImageCaptureUri); //mImageCaptureUri에 있는 Uri형 값을 getRealPathFrom Uri를 이용해 String 형태로 변환한뒤 mUri에 저장
-                    mThumbUri = getThumbnailPath(mImageCaptureUri.toString());
-                }
+                //Log.e("파일명",FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
 
                 //시간을 받아온다 (yyyy/MM/dd) 형태로
                 long now = System.currentTimeMillis();
@@ -255,6 +248,7 @@ public class UpdateActivity extends Activity {
                         public void onResponse(String response) {
                             try {
                                 JSONObject jsonResponse = new JSONObject(response);
+                                Log.i("UpdateJsonobject",response);
                                 boolean success = jsonResponse.getBoolean("success");
                                 if (success) {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(UpdateActivity.this);
@@ -276,6 +270,10 @@ public class UpdateActivity extends Activity {
                             }
                         }
                     };
+                    mUri = sp.getString("mUri","");
+                    mThumbUri = sp.getString("mThumbUri","");
+                    slat = sp.getString("slat","");
+                    slng = sp.getString("slng","");
                     UpdateRequest updateRequest = new UpdateRequest(num, email, title, content, mUri, mThumbUri, getTime, slat, slng, responseListener);
                     Log.e("볼리",num + "/" + email + "/" + title + "/" + content + "/" + mUri + "/" + mThumbUri + "/" + getTime + "/" + slat + "/" +slng);
                     RequestQueue queue = Volley.newRequestQueue(UpdateActivity.this);
@@ -429,6 +427,41 @@ public class UpdateActivity extends Activity {
         return nowAddress;
     }
 
+    private void camera(){
+        File imageStorageDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +"/DCIM/Camera/");
+        if (!imageStorageDir.exists()) {
+            // Create AndroidExampleFolder at sdcard
+            imageStorageDir.mkdirs();
+        }
+
+        File file = new File(imageStorageDir + File.separator + "IMG_" + String.valueOf(System.currentTimeMillis()) + ".jpg");
+
+        //mImageCaptureUri = Uri.fromFile(file);
+        //galleryAddPic();
+        // ImageView에 보여주기위해 사진파일의 절대 경로를 얻어온다.
+        imagePath = file.getAbsolutePath();
+
+        //사용자의 os가 마시멜로우 이상인지 체크.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) { //camera permission 불가면 실행
+                if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                    // 사용자가 퍼미션을 작성해야 하는 이유에 대해 설명.
+                    Toast.makeText(this, "카메라를 사용하려면 허용 하셔야 합니다.", Toast.LENGTH_SHORT).show();
+                }
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_PERMISSION_REQUEST_STORAGE); //권한획득 팝업
+            } else {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+                mImageCaptureUri = intent.getData();
+                startActivityForResult(intent, TAKE_CAMERA);
+            }
+        } else {
+            //사용자 os가 마시멜로우 이하일 경우
+            //임시
+            Toast.makeText(this, "마시멜로우 os 이하에서는 카메라를 이용할 수 없습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void checkGalleryPermission() {
         //갤러리 데이터 열 퍼미션 체크
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED||
@@ -449,31 +482,6 @@ public class UpdateActivity extends Activity {
         String path = cursor.getString( cursor.getColumnIndex( "_data" ) );
         cursor.close();
         return path;
-    }
-    //비트맵 형식
-    private Bitmap getThumbNail(Uri uri) {
-        Log.d("test","from uri : "+uri);
-        String[] filePathColumn = {MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA, MediaStore.Images.Media.TITLE/*, MediaStore.Images.Media.ORIENTATION*/};
-        ContentResolver cor = getContentResolver();
-        //content 프로토콜로 리턴되기 때문에 실제 파일의 위치로 변환한다.
-        Cursor cursor = cor.query(uri, filePathColumn, null, null, null);
-        Bitmap thumbnail = null;
-        if(cursor != null) {
-            cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            long ImageId = cursor.getLong(columnIndex);
-            if(ImageId != 0) {
-                BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-                thumbnail = MediaStore.Images.Thumbnails.getThumbnail(
-                        getContentResolver(), ImageId,
-                        MediaStore.Images.Thumbnails.MINI_KIND,
-                        bmOptions);
-            } else {
-                Toast.makeText(this, "불러올수 없는 이미지 입니다.", Toast.LENGTH_LONG).show();
-            }
-            cursor.close();
-        }
-        return thumbnail;
     }
 
     //content:// 주소
@@ -531,6 +539,7 @@ public class UpdateActivity extends Activity {
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
     }
+
     private Bitmap resize(Context context,Uri uri,int resize){
         Bitmap resizeBitmap=null;
 
@@ -565,48 +574,15 @@ public class UpdateActivity extends Activity {
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
-    private void camera(){
-        File imageStorageDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +"/DCIM/Camera/");
-        if (!imageStorageDir.exists()) {
-            // Create AndroidExampleFolder at sdcard
-            imageStorageDir.mkdirs();
-        }
-
-        File file = new File(imageStorageDir + File.separator + "IMG_" + String.valueOf(System.currentTimeMillis()) + ".jpg");
-
-        mImageCaptureUri = Uri.fromFile(file);
-        galleryAddPic();
-        // ImageView에 보여주기위해 사진파일의 절대 경로를 얻어온다.
-        imagePath = file.getAbsolutePath();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) { //camera permission 불가면 실행
-                if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-                    // 사용자가 퍼미션을 작성해야 하는 이유에 대해 설명.
-                    Toast.makeText(this, "카메라를 사용하려면 허용 하셔야 합니다.", Toast.LENGTH_SHORT).show();
-                }
-                requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_PERMISSION_REQUEST_STORAGE); //권한획득 팝업
-            } else {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-                startActivityForResult(intent, TAKE_CAMERA);
-            }
-        } else {
-
-        }
-    }
 
     private void uploadImage() {
         class UploadImage extends AsyncTask<Void, Void, String> {
-
             ProgressDialog uploading;
-
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
                 uploading = ProgressDialog.show(UpdateActivity.this, "Uploading File", "Please wait...", false, false);
             }
-
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
@@ -618,10 +594,7 @@ public class UpdateActivity extends Activity {
             @Override
             protected String doInBackground(Void... params) {
                 FileUpload u = new FileUpload();
-                //ThumbnailFileUpload tu = new ThumbnailFileUpload();
                 String msg = u.uploadImage(selectedPath);
-
-
                 return msg;
             }
         }
@@ -745,7 +718,6 @@ public class UpdateActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        /*
         SharedPreferences sp = getSharedPreferences("pref",MODE_PRIVATE);
         SharedPreferences.Editor editor=sp.edit();
         String title = et1.getText().toString();
@@ -754,7 +726,6 @@ public class UpdateActivity extends Activity {
         editor.putString("title",title);
         editor.putString("content",content);
         editor.commit();
-        */
     }
     @Override
     public void onBackPressed() {

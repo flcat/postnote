@@ -162,13 +162,13 @@ public class WriteActivity extends Activity {
                 String content = et2.getText().toString();
                 //if (mImageCaptureUri != null) {
                 thumbnailUploadImage();
-                Log.e("writeActivity_thumbnail","ok"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
+                //Log.e("writeActivity_thumbnail","ok"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
                 uploadImage();
-                Log.e("writeActivity_image","ok2"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
+                //Log.e("writeActivity_image","ok2"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
                 editor.putString("mUri","http://flcat.vps.phps.kr/uploads/images"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
                 editor.putString("mThumbUri","http://flcat.vps.phps.kr/uploads/thumbnails"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
                 editor.commit();
-                Log.e("파일명",FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
+                //Log.e("파일명",FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
 
                 //시간을 받아온다 (yyyy/MM/dd) 형태로
                 long now = System.currentTimeMillis();
@@ -297,6 +297,7 @@ public class WriteActivity extends Activity {
                     System.out.println("SELECT_Images");
                     Uri selectedImageUri = data.getData();
                     selectedPath = getRealPathFromURI(selectedImageUri);
+                    Log.e("selectedPath 직접 선택할때",selectedPath);
                     returnImg = data.getData();
                     if ("com.google.android.apps.photos.contentprovider".equals(returnImg.getAuthority())) {
                         for (int i = 0; i < returnImg.getPathSegments().size(); i++) {
@@ -534,6 +535,7 @@ public class WriteActivity extends Activity {
             @Override
             protected String doInBackground(Void... params) {
                 FileUpload u = new FileUpload();
+                Log.e("selectedPath 진짜 업로드할때",selectedPath);
                 String msg = u.uploadImage(selectedPath);
                 return msg;
             }

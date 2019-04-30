@@ -35,7 +35,7 @@ public class FileUpload {
      * @return*/
 
     public static String getExtension(String fileStr){
-        String fileExtension = fileStr.substring(fileStr.lastIndexOf(".")+1);
+        String fileExtension = fileStr.substring(fileStr.lastIndexOf(".")+1,fileStr.length());
         return TextUtils.isEmpty(fileExtension) ? null : fileExtension;
     }
 
