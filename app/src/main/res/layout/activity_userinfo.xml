@@ -62,13 +62,22 @@
             android:id="@+id/complete_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:background="#FFB300"
             android:text="수정 완료"
             android:textColor="#FFFFFF"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="100dp"
-            android:layout_below="@+id/nick_text"/>
+            android:layout_marginTop="600dp"
+            android:layout_marginLeft="50dp"
+            />
+        <Button
+            android:id="@+id/withdrawal_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#708090"
+            android:text="회원탈퇴"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="600dp"
+            android:layout_alignStart="@+id/complete_btn"
+            android:layout_marginLeft="200dp"/>
     <ProgressBar
         android:layout_width="50dp"
         android:layout_height="50dp"

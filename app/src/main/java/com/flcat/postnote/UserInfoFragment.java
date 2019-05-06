@@ -117,7 +117,6 @@ public class UserInfoFragment extends Fragment {
             Toast.makeText(getActivity(),"프로필 사진을 등록해주세요.",Toast.LENGTH_SHORT).show();
         }
 
-
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,9 +138,7 @@ public class UserInfoFragment extends Fragment {
                 // sees the explanation, try again to request the permission.
 
             } else {
-
                 // No explanation needed, we can request the permission.
-
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
                         1);
@@ -154,8 +151,6 @@ public class UserInfoFragment extends Fragment {
         return v;
 
     }
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -173,7 +168,6 @@ public class UserInfoFragment extends Fragment {
             }
         }
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {

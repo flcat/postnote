@@ -518,32 +518,46 @@ public class WriteActivity extends Activity {
     }
     //업로드 AsyncTask
     private void uploadImage() {
-        class UploadImage extends AsyncTask<Void, Void, String> {
+        class UploadImage extends AsyncTask<String, Integer, Boolean> {
             ProgressDialog uploading;
+
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                uploading = ProgressDialog.show(WriteActivity.this, "Uploading File", "Please wait...", false, false);
+                uploading = new ProgressDialog(WriteActivity.this);
+                uploading.setMessage("이미지 업로드중....");
+                uploading.show();
             }
+
             @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                uploading.dismiss();
-                //textViewResponse.setText(Html.fromHtml("<b>Uploaded at <a href='" + s + "'>" + s + "</a></b>"));
-                //textViewResponse.setMovementMethod(LinkMovementMethod.getInstance());
+            protected Boolean doInBackground(String... params) {
+
+                try {
+                    JSONObject jsonObject = JSONParser.uploadImage(params[0], params[1]);
+                    if (jsonObject != null)
+                        return jsonObject.getString("result").equals("success");
+
+                } catch (JSONException e) {
+                    Log.i("TAG", "Error : " + e.getLocalizedMessage());
+                }
+                return false;
             }
+
             @Override
-            protected String doInBackground(Void... params) {
-                FileUpload u = new FileUpload();
-                Log.e("selectedPath 진짜 업로드할때",selectedPath);
-                String msg = u.uploadImage(selectedPath);
-                return msg;
+            protected void onPostExecute(Boolean aBoolean) {
+                super.onPostExecute(aBoolean);
+                if (uploading != null)
+                    uploading.dismiss();
+
+                if (aBoolean)
+                    Toast.makeText(getApplicationContext(), "파일 업로드 성공", Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(getApplicationContext(), "파일 업로드 실패", Toast.LENGTH_LONG).show();
+
+                imagePath = "";
             }
         }
-        UploadImage ui = new UploadImage();
-        ui.execute();
     }
-
     //Thumbnail 업로드 AsyncTask
     private void thumbnailUploadImage() {
         class ThumbnailUploadImage extends AsyncTask<Void, Void, String> {
