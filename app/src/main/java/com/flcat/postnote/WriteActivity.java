@@ -161,14 +161,16 @@ public class WriteActivity extends Activity {
                 String title = et1.getText().toString(); //WriteRequest에 값을 보내기 위해 edittext에 입력된값을 변수에 저장
                 String content = et2.getText().toString();
                 //if (mImageCaptureUri != null) {
-                thumbnailUploadImage();
-                //Log.e("writeActivity_thumbnail","ok"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
-                uploadImage();
+
                 //Log.e("writeActivity_image","ok2"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
                 editor.putString("mUri","http://flcat.vps.phps.kr/uploads/images"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
                 editor.putString("mThumbUri","http://flcat.vps.phps.kr/uploads/thumbnails"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
                 editor.commit();
                 //Log.e("파일명",FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
+
+                //thumbnailUploadImage();
+                //Log.e("writeActivity_thumbnail","ok"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
+                uploadImage();
 
                 //시간을 받아온다 (yyyy/MM/dd) 형태로
                 long now = System.currentTimeMillis();
@@ -298,6 +300,7 @@ public class WriteActivity extends Activity {
                     Uri selectedImageUri = data.getData();
                     selectedPath = getRealPathFromURI(selectedImageUri);
                     Log.e("selectedPath 직접 선택할때",selectedPath);
+                    /*
                     returnImg = data.getData();
                     if ("com.google.android.apps.photos.contentprovider".equals(returnImg.getAuthority())) {
                         for (int i = 0; i < returnImg.getPathSegments().size(); i++) {
@@ -308,6 +311,7 @@ public class WriteActivity extends Activity {
                             }
                         }
                     }
+                    */
                     mImageCaptureUri = data.getData();
                     Log.d("사진 실제 주소", mImageCaptureUri.getPath().toString());
                     //썸네일
@@ -318,7 +322,7 @@ public class WriteActivity extends Activity {
                     String tmp = getRealPathFromURI(mImageCaptureUri);
                     Log.e("mImageCaptureUri", tmp);
                     Log.e("selectedThumbnailPath",selectedThumbnailPath);
-                    data.putExtra("mUri", tmp);
+                    data.putExtra("mUri", selectedPath);
                     data.putExtra("mThumbUri", selectedThumbnailPath);
                 }
             }
@@ -518,7 +522,7 @@ public class WriteActivity extends Activity {
     }
     //업로드 AsyncTask
     private void uploadImage() {
-        class UploadImage extends AsyncTask<String, Integer, Boolean> {
+        class UploadImage extends AsyncTask<Void, Void, String> {
             ProgressDialog uploading;
 
             @Override
@@ -530,8 +534,13 @@ public class WriteActivity extends Activity {
             }
 
             @Override
-            protected Boolean doInBackground(String... params) {
+            protected String doInBackground(Void... params) {
+                FileUpload ui = new FileUpload();
+                String msg = ui.uploadImage(selectedThumbnailPath);
 
+
+                return msg;
+                /*
                 try {
                     JSONObject jsonObject = JSONParser.uploadImage(params[0], params[1]);
                     if (jsonObject != null)
@@ -540,12 +549,14 @@ public class WriteActivity extends Activity {
                 } catch (JSONException e) {
                     Log.i("TAG", "Error : " + e.getLocalizedMessage());
                 }
-                return false;
+                return null;
+                */
             }
 
             @Override
-            protected void onPostExecute(Boolean aBoolean) {
-                super.onPostExecute(aBoolean);
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                /*
                 if (uploading != null)
                     uploading.dismiss();
 
@@ -555,8 +566,11 @@ public class WriteActivity extends Activity {
                     Toast.makeText(getApplicationContext(), "파일 업로드 실패", Toast.LENGTH_LONG).show();
 
                 imagePath = "";
+                */
             }
         }
+        UploadImage ui = new UploadImage();
+        ui.execute();
     }
     //Thumbnail 업로드 AsyncTask
     private void thumbnailUploadImage() {

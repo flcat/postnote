@@ -35,7 +35,11 @@ public class FileUpload {
      * @return*/
 
     public static String getExtension(String fileStr){
-        String fileExtension = fileStr.substring(fileStr.lastIndexOf(".")+1,fileStr.length());
+        fileExtension = "";
+        int index = fileStr.lastIndexOf(".")+1;
+        int length = fileStr.length();
+        fileExtension = fileStr.substring(index,length);
+        Log.e("Extension",fileExtension);
         return TextUtils.isEmpty(fileExtension) ? null : fileExtension;
     }
 
@@ -45,18 +49,19 @@ public class FileUpload {
      * @return */
     public String getFileName(String fileStr, boolean isExtension){
         fileName = null;
+        int nameindexslash = fileStr.lastIndexOf("/");
+        int nameindexdot = fileStr.lastIndexOf(".");
         if(isExtension)
         {
-            fileName = fileStr.substring(fileStr.lastIndexOf("/"),fileStr.lastIndexOf("."));
+            fileName = fileStr.substring(nameindexslash,nameindexdot);
         }else{
-            fileName = fileStr.substring(fileStr.lastIndexOf("/")+1);
+            fileName = fileStr.substring(nameindexslash+1);
         }
         return fileName;
     }
     public String uploadImage(String file) {
-
+        fileName = file; //파일위치
         fileExtension = getExtension(file);
-        //fileName = file; //파일위치
         fileName = getFileName(file,true);
         File sourceFile = new File(file);
         if (!sourceFile.isFile()) { //해당 위치에 파일 존재하는지 검사
@@ -83,10 +88,8 @@ public class FileUpload {
             // output은 쓰기, input은 읽기, 데이터를 전송할 때 전송할 내용을 적는 것으로 이해할 것
             dos = new DataOutputStream(conn.getOutputStream());
 
-
             // 이미지 전송, 데이터 전달 uploadded_file라는 php key값에 저장되는 내용은 fileName
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-
             dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\"; filename=\"" + fileName+ stUploadtime+ "." + fileExtension + "\"" + lineEnd);
             dos.writeBytes(lineEnd);
 
