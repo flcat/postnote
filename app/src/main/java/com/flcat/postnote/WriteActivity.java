@@ -168,10 +168,6 @@ public class WriteActivity extends Activity {
                 editor.commit();
                 //Log.e("파일명",FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
 
-                //thumbnailUploadImage();
-                //Log.e("writeActivity_thumbnail","ok"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
-                uploadImage();
-
                 //시간을 받아온다 (yyyy/MM/dd) 형태로
                 long now = System.currentTimeMillis();
                 Date date = new Date(now);
@@ -216,6 +212,7 @@ public class WriteActivity extends Activity {
                     mThumbUri = sp.getString("mThumbUri","");
                     slat = sp.getString("slat","");
                     slng = sp.getString("slng","");
+
                     WriteRequest writeRequest = new WriteRequest(num, email, title, content, mUri, mThumbUri, getTime, dlat+"", dlng+"", responseListener);
                     Log.e("볼리",num + "/" + email + "/" + title + "/" + content + "/" + mUri + "/" + mThumbUri + "/" + getTime + "/" + slat + "/" +slng);
                     RequestQueue queue = Volley.newRequestQueue(WriteActivity.this);
@@ -300,18 +297,6 @@ public class WriteActivity extends Activity {
                     Uri selectedImageUri = data.getData();
                     selectedPath = getRealPathFromURI(selectedImageUri);
                     Log.e("selectedPath 직접 선택할때",selectedPath);
-                    /*
-                    returnImg = data.getData();
-                    if ("com.google.android.apps.photos.contentprovider".equals(returnImg.getAuthority())) {
-                        for (int i = 0; i < returnImg.getPathSegments().size(); i++) {
-                            String temp = returnImg.getPathSegments().get(i);
-                            if (temp.startsWith("content://") || temp.startsWith("uricontent://")) {
-                                returnImg = Uri.parse(temp);
-                                break;
-                            }
-                        }
-                    }
-                    */
                     mImageCaptureUri = data.getData();
                     Log.d("사진 실제 주소", mImageCaptureUri.getPath().toString());
                     //썸네일
@@ -324,6 +309,10 @@ public class WriteActivity extends Activity {
                     Log.e("selectedThumbnailPath",selectedThumbnailPath);
                     data.putExtra("mUri", selectedPath);
                     data.putExtra("mThumbUri", selectedThumbnailPath);
+                    thumbnailUploadImage();
+                    //Log.e("writeActivity_thumbnail","ok"+FileUpload.fileName+FileUpload.stUploadtime+ "." + FileUpload.fileExtension);
+                    uploadImage();
+
                 }
             }
         }
@@ -536,7 +525,7 @@ public class WriteActivity extends Activity {
             @Override
             protected String doInBackground(Void... params) {
                 FileUpload ui = new FileUpload();
-                String msg = ui.uploadImage(selectedThumbnailPath);
+                String msg = ui.uploadImage(selectedPath);
 
 
                 return msg;
@@ -556,6 +545,7 @@ public class WriteActivity extends Activity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
+                uploading.dismiss();
                 /*
                 if (uploading != null)
                     uploading.dismiss();
@@ -582,12 +572,15 @@ public class WriteActivity extends Activity {
             protected void onPreExecute() {
                 super.onPreExecute();
                 //uploading = ProgressDialog.show(WriteActivity.this, "Uploading File", "Please wait...", false, false);
+                uploading = new ProgressDialog(WriteActivity.this);
+                uploading.setMessage("이미지 업로드중....");
+                uploading.show();
             }
 
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                //uploading.dismiss();
+                uploading.dismiss();
                 //textViewResponse.setText(Html.fromHtml("<b>Uploaded at <a href='" + s + "'>" + s + "</a></b>"));
                 //textViewResponse.setMovementMethod(LinkMovementMethod.getInstance());
             }
