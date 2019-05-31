@@ -134,7 +134,7 @@ public class CustomAdapter extends BaseAdapter{
                             }
                         }
                     };
-                    //DeleteRequest deleteRequest = new DeleteRequest(num+"",holder.title.getText().toString(), holder.content.getText().toString(), responseListener);
+
                     DeleteRequest deleteRequest = new DeleteRequest(num+"",holder.title.getText().toString(),responseListener);
                     RequestQueue queue = Volley.newRequestQueue(parentActivity);
                     queue.add(deleteRequest);
@@ -146,37 +146,6 @@ public class CustomAdapter extends BaseAdapter{
         }
 
         return v;
-    }
-
-    public void editItem(ListViewItem originitem, ListViewItem edited_item) {
-        /*
-        //바꿀아이템을 찾기위한 originitem , 수정시킨 아이템 editeditem
-        //전체 아이템에서 수정
-        Iterator itr_all = items.iterator();
-
-        int cnt = 0;
-
-        while (itr_all.hasNext()) { //전체 아이템에서 수정할 아이템과 동일한 아이템 찾기
-            ListViewItem tmp = (ListViewItem) itr_all.next();
-
-            System.out.println("(" + cnt + ") : " + tmp.getTitle());
-
-            //아이템 동일여부 체크 (타이틀, 메모)
-            if ((tmp.getTitle().equals(originitem.getTitle())) && (tmp.getMemo().equals(originitem.getMemo())))
-
-            {
-
-                System.out.println("(" + cnt + ") 검색결과" + tmp.getTitle() + "이 전체 항목에서 동일함을 발견하였습니다.");
-
-
-                items.set(cnt, edited_item); //원래 아이템에서 수정될 아이템으로 덮어버리기
-                notifyDataSetChanged();
-                break; //모든 요소가 같을 경우 중복 수정 에러를 위해 하나 찾게되면 무조건 break
-            }
-
-            cnt++;
-        }
-        */
     }
     public void saveData(Context mContext) {
         /*

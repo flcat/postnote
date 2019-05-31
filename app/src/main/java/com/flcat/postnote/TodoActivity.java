@@ -76,7 +76,6 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
     public static String notelist;
     final String TAG = TodoActivity.class.getName();
     TextView nick;
-    BackgroundTask backgroundTask = new BackgroundTask();
     String date_str;
     String userEmail;
     String userPhoto;
@@ -127,6 +126,7 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(activity_main);
         mContext = this;
         mFirebaseAuth = LoginActivity.mAuth;
@@ -176,7 +176,6 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                //backgroundTask.execute();
                 ListViewItem item = (ListViewItem) adapter.getItem(position);
 
                 //select position 확인
@@ -202,6 +201,8 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
                 intent.putExtra("mThumbUri",mThumbUri);
                 intent.putExtra("lat",lat);
                 intent.putExtra("lng",lng);
+
+                Log.e("Todo_mUri_ur_value",mUri);
 
                 startActivityForResult(intent, 1001);
             }
@@ -239,9 +240,9 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
 
         //유저 사진
         final ImageView navi_header_userPhoto = (ImageView)navi_header_view.findViewById(R.id.nav_header_userphoto);
+
         // Write a message to the database
         // Read from the database
-
         Thread mThread = new Thread() {
             @Override
             public void run() {
