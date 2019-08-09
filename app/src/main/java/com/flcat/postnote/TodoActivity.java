@@ -43,14 +43,6 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -67,7 +59,7 @@ import java.util.List;
 
 import static com.flcat.postnote.R.layout.activity_main;
 
-public class TodoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,AbsListView.OnScrollListener, SwipeRefreshLayout.OnRefreshListener {
+public class TodoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,AbsListView.OnScrollListener {
     FirebaseAuth mFirebaseAuth;
     public static FirebaseUser mFirebaseUser;
     DrawerLayout drawer = null;
@@ -541,9 +533,11 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
         // firstVisibleItem : 화면에 보이는 첫번째 리스트의 아이템 번호.
         // visibleItemCount : 화면에 보이는 리스트 아이템의 갯수
         // totalItemCount : 리스트 전체의 총 갯수
+        /*
         // 리스트의 갯수가 0개 이상이고, 화면에 보이는 맨 하단까지의 아이템 갯수가 총 갯수보다 크거나 같을때.. 즉 리스트의 끝일때. true
         lastItemVisibleFlag = (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount);
         int lastItemVisiblePosition = view.getLastVisiblePosition();
+        */
         Log.e("position", "--firstItem:" + firstVisibleItem + "  visibleItemCount:" + visibleItemCount + "  totalItemCount:" + totalItemCount + "  pageCount:" + totPageCount);
         int total = firstVisibleItem + visibleItemCount;
 
@@ -556,7 +550,7 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
             if (totalItemCount > previousTotal) {  // 20 , 40 >
                 loading = false;
                 previousTotal = totalItemCount;
-                currentPage++;
+                //currentPage++;
             }
         }
         if (totPageCount > 0) {
@@ -565,7 +559,6 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
                 //Toast.makeText(MyInfoAddressSearchResultActivity.this, "마지막 페이지 입니다.",Toast.LENGTH_SHORT).show();
             } else if (!loading && (total) % 20 == 0 && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleItemCount)) {  //페이지당 20개씩 노출함으로 20으로 나누고 나머지값이 0으로 떨어지면 다음 페이지 호출
                 currentPage = currentPage + 1;
-                getitem();
                 loading = true;
             }
         }
@@ -617,10 +610,6 @@ public class TodoActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    @Override
-    public void onRefresh() {
-        getitem();
-    }
 
     class BackgroundTask extends AsyncTask<Void, Void, String>
     {
